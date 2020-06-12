@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Your Character: {{ character  }}</h2>
+{% if allies %}
+    <h2>Your Allies</h2>
+    {% for instance in allies %}
+    <h3>{{ instance }}</h3>
+    {% endfor %}
+{% endif %}
+{% endblock %}
