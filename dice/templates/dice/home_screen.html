@@ -1,4 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1>HomeScreen</h1>
+<h1>Pick Your Characters!</h1>
+<form method="POST"> {% csrf_token %}
+    {{ character_form.as_p }}
+    <input type="submit" value='Select' />
+</form>
+
+{% if character %}
+    <p>Your Character: {{ character  }}</p>
+{% endif %}
+{% if ally %}
+    <p>Your Ally: {{ ally }}</p>
+{% endif %}
+
 {% endblock %}
