@@ -18,7 +18,17 @@ class SelectPlayerCharacter(forms.Form):
     character = forms.ChoiceField(
         choices=enumerate(characters), label="Choose Character", initial='',
         widget=forms.Select(), required=True)
-    ally = forms.ChoiceField(
-        choices=enumerate(ally), label="Choose Ally", initial='',
+    ally_one = forms.ChoiceField(
+        choices=enumerate(ally), label="Choose Ally 1", initial='',
         widget=forms.Select(), required=False)
-    field_order = ['character', 'ally']
+    ally_two = forms.ChoiceField(
+        choices=enumerate(ally), label="Choose Ally 2", initial='',
+        widget=forms.Select(), required=False)
+    ally_three = forms.ChoiceField(
+        choices=enumerate(ally), label="Choose Ally 3", initial='',
+        widget=forms.Select(), required=False)
+    ally_four = forms.ChoiceField(
+        choices=enumerate(ally), label="Choose Ally 4", initial='',
+        widget=forms.Select(), required=False)
+    field_order = ['character', 'ally_one',
+                   'ally_two', 'ally_three', 'ally_four']

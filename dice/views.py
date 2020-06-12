@@ -11,17 +11,27 @@ def home_view(request):
     """
     Home Screen, default location
     """
+
+    def get_ally_context(form, context):
+        result = []
+        allies = ('ally_one',
+                  'ally_two',
+                  'ally_three',
+                  'ally_four')
+        for key in allies:
+            identifier = int(form.cleaned_data.get(key))
+            if identifier > 0:
+                result.append(CharacterDice.objects.get(pk=identifier))
+        context['allies'] = result
+
     character_form = SelectPlayerCharacter(request.POST or None)
     context = {'character_form': character_form}
     if character_form.is_valid():
         character_id = int(character_form.cleaned_data.get("character")) + 1
         character = CharacterDice.objects.get(pk=character_id)
         context['character'] = character
-        ally_id = int(character_form.cleaned_data.get("ally"))
-        if ally_id > 0:
-            ally = CharacterDice.objects.get(pk=ally_id+1)
-            context['ally'] = ally
-        return render(request, 'dice/home_screen.html', context)
+        get_ally_context(character_form, context)
+        print(context)
     return render(request, 'dice/home_screen.html', context)
 
 
