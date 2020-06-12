@@ -1,11 +1,13 @@
 from django.urls import path
 from .views import (
-    home_view
+    home_view,
+    all_character_view
 )
 
 app_name = 'dice'
 urlpatterns = [
     path('', home_view, name='home'),
+    path('characters',all_character_view, name='characters'),
 
 ]
 # from .views import (product_create_view,
