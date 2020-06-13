@@ -1,10 +1,27 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Your Character: {{ character  }}</h2>
+<h2>Your Character: {{ character.character_name  }}</h2>
 {% if allies %}
     <h2>Your Allies</h2>
     {% for instance in allies %}
-    <h3>{{ instance }}</h3>
+    <h3>{{ instance.character_name }}</h3>
     {% endfor %}
 {% endif %}
+<button type="button">Add Ally!</button>
+
+<h2>Your Available Dice</h2>
+{% for instance in dice %}
+<h3>{{ instance }}</h3>
+{% endfor %}
+
+<h1>Places dice</h1>
+{% for instance in place_dice %}
+<h3>{{ instance }}</h3>
+{% endfor %}
+
+<h1>Statistics</h1>
+{% for instance in statistics %}
+<h3>{{ instance }}</h3>
+{% endfor %}
+
 {% endblock %}

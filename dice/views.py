@@ -29,7 +29,7 @@ def home_view(request):
                 ally = CharacterDice.objects.get(pk=identifier)
                 result.append(ally)
         request.session[ALLIES_KEY] = serializers.serialize(
-                    'json', result)
+            'json', result)
 
     def get_character(form):
         character_id = int(form.cleaned_data.get("character")) + 1
@@ -62,21 +62,34 @@ def dice_view(request):
     """
     Views to help the player decide which dice to use
     """
-    character_from_session = serializers.deserialize(
-        "json", request.session.get(CHARACTER_KEY))
+    def get_context_from_session():
+        character_from_session = serializers.deserialize(
+            "json", request.session.get(CHARACTER_KEY))
 
-    for chara in character_from_session:
-        character = chara.object
+        allies_from_session = serializers.deserialize(
+            "json", request.session.get(ALLIES_KEY))
 
-    allies_from_session = serializers.deserialize(
-        "json", request.session.get(ALLIES_KEY))
+        characters = []
+        for chara in character_from_session:
+            characters.append(chara.object)
 
-    allies = []
-    for ally in allies_from_session:
-        allies.append(ally.object)
-    print("Called with {} {}".format(character, allies))
-    context = {'character': character,
-               'allies': allies}
+        for ally in allies_from_session:
+            characters.append(ally.object)
+
+        place_dice = [[1, 2, 3, 4, 5, 6]]
+        available_dice = [['1', '2', '3', '4', '5', '6']]
+        statistics = [(1, 6, 3.5, 6)]
+        for character in characters:
+            available_dice.append(character.get_true_dice())
+            place_dice.append(character.get_places_dice())
+            statistics.append(character.get_statistics())
+        return {'character': characters[0],
+                'allies': characters[1:],
+                'dice': available_dice,
+                'place_dice': place_dice,
+                'statistics': statistics, }
+
+    context = get_context_from_session()
     return render(request, 'dice/dice.html', context)
 
 
