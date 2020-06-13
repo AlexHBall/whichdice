@@ -69,22 +69,23 @@ def dice_view(request):
         allies_from_session = serializers.deserialize(
             "json", request.session.get(ALLIES_KEY))
 
-        characters = []
+        characters = [CharacterDice.objects.last()]
         for chara in character_from_session:
             characters.append(chara.object)
 
         for ally in allies_from_session:
             characters.append(ally.object)
+        # TODO: Figure out what statistics i want from the model and how to show them
 
-        place_dice = [[1, 2, 3, 4, 5, 6]]
-        available_dice = [['1', '2', '3', '4', '5', '6']]
-        statistics = [(1, 6, 3.5, 6)]
+        place_dice = []
+        available_dice = []
+        statistics = []
         for character in characters:
             available_dice.append(character.get_true_dice())
             place_dice.append(character.get_places_dice())
             statistics.append(character.get_statistics())
-        return {'character': characters[0],
-                'allies': characters[1:],
+        return {'character': characters[1],
+                'allies': characters[2:],
                 'dice': available_dice,
                 'place_dice': place_dice,
                 'statistics': statistics, }
