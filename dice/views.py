@@ -91,9 +91,12 @@ def dice_view(request):
         for chara in characters:
             dice.append(chara.get_places_dice())
         best_dice = CharacterDice.get_best_dice(dice, target, effect)
-        dice_to_use = characters[best_dice]
-        character = serializers.serialize(
-            'json', [dice_to_use])
+        if best_dice >= 0:
+            dice_to_use = characters[best_dice]
+            character = serializers.serialize(
+                'json', [dice_to_use])
+        else:
+            character = 'Not Possible'
         request.session[BEST_DICE_KEY] = character
 
     context = get_context_from_session()
@@ -109,13 +112,15 @@ def best_dice_view(request):
     """
     Displays the best dice to use
     """
-    character_from_session = serializers.deserialize(
-        "json", request.session.get(BEST_DICE_KEY))
+    try:
+        character_from_session = serializers.deserialize(
+            "json", request.session.get(BEST_DICE_KEY))
+        for chara in character_from_session:
+            character = chara.object
 
-    for chara in character_from_session:
-        character = chara.object
-
-    return render(request, 'dice/best_dice.html', {'object' : character})
+        return render(request, 'dice/best_dice.html', {'object' : character})
+    except:
+        return render(request, 'dice/best_dice.html', {})
 
 
 # def character_view(request, idenitifer):

@@ -87,7 +87,7 @@ class CharacterDice(models.Model):
             for num in cntr:
                 probability[num] = cntr[num]/6
             probabilites.append(probability)
-        dice_number = 0
+        dice_number = -1
         current_dice = 0
         current_highest_p = 0
         for dice in probabilites:
@@ -98,4 +98,5 @@ class CharacterDice(models.Model):
             except KeyError:
                 pass
             current_dice += 1
+            
         return dice_number
