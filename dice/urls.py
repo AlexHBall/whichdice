@@ -4,8 +4,8 @@ Required by django
 from django.urls import path
 from .views import (
     home_view,
-    all_character_view,
-    character_view,
+    # all_character_view,
+    # character_view,
     dice_view,
     best_dice_view,
 )
@@ -13,8 +13,8 @@ from .views import (
 app_name = 'dice'
 urlpatterns = [
     path('', home_view, name='home'),
-    path('characters', all_character_view, name='characters'),
-    path('<int:idenitifer>/', character_view, name='character'),
+    # path('characters', all_character_view, name='characters'),
+    # path('<int:idenitifer>/', character_view, name='character'),
     path('dice', dice_view, name='dice'),
     path('best_dice', best_dice_view, name='best_dice',)
 
