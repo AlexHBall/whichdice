@@ -7,6 +7,7 @@ from .views import (
     all_character_view,
     character_view,
     dice_view,
+    best_dice_view,
 )
 
 app_name = 'dice'
@@ -15,6 +16,7 @@ urlpatterns = [
     path('characters', all_character_view, name='characters'),
     path('<int:idenitifer>/', character_view, name='character'),
     path('dice', dice_view, name='dice'),
+    path('best_dice', best_dice_view, name='best_dice',)
 
 ]
 # from .views import (product_create_view,

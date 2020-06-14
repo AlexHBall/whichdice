@@ -1,7 +1,7 @@
 """
 Required by django
 """
-from statistics import mean
+from collections import Counter
 
 from django.db import models
 # Create your models here.
@@ -52,30 +52,50 @@ class CharacterDice(models.Model):
                 places.append(int(side))
         return places
 
-    def get_coins_dice(self):
-        """
-        Returns a list of coin places
-        """
-        sides = self.get_true_dice()
-        coins = []
-        for side in sides:
-            if side[0] == '-' or side[0] == '+':
-                coins.append(int(side))
-            else:
-                coins.append(0)
-        return coins
+    # def get_coins_dice(self):
+    #     """
+    #     Returns a list of coin places
+    #     """
+    #     sides = self.get_true_dice()
+    #     coins = []
+    #     for side in sides:
+    #         if side[0] == '-' or side[0] == '+':
+    #             coins.append(int(side))
+    #         else:
+    #             coins.append(0)
+    #     return coins
 
-    def get_range(self):
+    @staticmethod
+    def get_best_dice(dices, target, effect):
         """
-        Gets the range from a nice
-        """
-        place_dice = self.get_places_dice()
-        return abs(max(place_dice) - min(place_dice))
+        Given a list of dices, return the one with the highest probability of getting target
 
-    def get_statistics(self):
+        Effect can be +3,+5,-2
         """
-        Return tuple of stastical information for one dice
-        (min, max, mean, range)
-        """
-        place_dice = self.get_places_dice()
-        return (min(place_dice), max(place_dice), mean(place_dice), self.get_range())
+
+
+        # TODO: Work out with effect
+        # TODO: Work out with how many characters (-1,0 or 1,2)
+
+        counters = []
+        probabilites = []
+        for dice in dices:
+            counters.append(Counter(dice))
+
+        for cntr in counters:
+            probability = {}
+            for num in cntr:
+                probability[num] = cntr[num]/6
+            probabilites.append(probability)
+        dice_number = 0
+        current_dice = 0
+        current_highest_p = 0
+        for dice in probabilites:
+            try:
+                if dice[target] > current_highest_p:
+                    current_highest_p = dice[target]
+                    dice_number = current_dice
+            except KeyError:
+                pass
+            current_dice += 1
+        return dice_number

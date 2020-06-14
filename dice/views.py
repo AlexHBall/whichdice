@@ -1,14 +1,15 @@
 """
 Required by django
 """
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, redirect
 from django.core import serializers
 
 from .models import CharacterDice
-from .forms import SelectPlayerCharacter
+from .forms import SelectPlayerCharacter, GetPlayerSpaces
 
 ALLIES_KEY = 'allies'
 CHARACTER_KEY = 'character'
+BEST_DICE_KEY = 'best_dice'
 
 
 def home_view(request):
@@ -47,22 +48,12 @@ def home_view(request):
     return render(request, 'dice/home_screen.html', context)
 
 
-def all_character_view(request):
-    """
-    Views all different characters and their dice
-    """
-    queryset = CharacterDice.objects.all()
-    context = {
-        "object_list": queryset
-    }
-    return render(request, 'dice/character_list.html', context)
-
-
 def dice_view(request):
     """
     Views to help the player decide which dice to use
     """
-    def get_context_from_session():
+
+    def get_characters():
         character_from_session = serializers.deserialize(
             "json", request.session.get(CHARACTER_KEY))
 
@@ -75,32 +66,75 @@ def dice_view(request):
 
         for ally in allies_from_session:
             characters.append(ally.object)
-        # TODO: Figure out what statistics i want from the model and how to show them
+        return characters
 
-        place_dice = []
+    def get_context_from_session():
+        characters = get_characters()
         available_dice = []
-        statistics = []
+        place_dice = []
+        # statistics = []
         for character in characters:
             available_dice.append(character.get_true_dice())
             place_dice.append(character.get_places_dice())
-            statistics.append(character.get_statistics())
+            # statistics.append(character.get_statistics())
         return {'character': characters[1],
                 'allies': characters[2:],
                 'dice': available_dice,
-                'place_dice': place_dice,
-                'statistics': statistics, }
+                'place_dice': place_dice, }
+        # 'statistics': statistics, }
+
+    def handle_spaces_form():
+        characters = get_characters()
+        target = int(spaces_form.cleaned_data.get("spaces"))
+        effect = spaces_form.cleaned_data.get("item")
+        dice = []
+        for chara in characters:
+            dice.append(chara.get_places_dice())
+        best_dice = CharacterDice.get_best_dice(dice, target, effect)
+        dice_to_use = characters[best_dice]
+        character = serializers.serialize(
+            'json', [dice_to_use])
+        request.session[BEST_DICE_KEY] = character
 
     context = get_context_from_session()
+    spaces_form = GetPlayerSpaces(request.POST or None)
+    context['form'] = spaces_form
+    if spaces_form.is_valid():
+        handle_spaces_form()
+        return redirect('/best_dice')
     return render(request, 'dice/dice.html', context)
 
 
-def character_view(request, idenitifer):
+def best_dice_view(request):
     """
-    Views a specific character
+    Displays the best dice to use
     """
-    obj = get_object_or_404(CharacterDice, id=idenitifer)
-    context = {
-        'object': obj
-    }
-    print(obj)
-    return render(request, 'dice/character_detail.html', context)
+    character_from_session = serializers.deserialize(
+        "json", request.session.get(BEST_DICE_KEY))
+
+    for chara in character_from_session:
+        character = chara.object
+
+    return render(request, 'dice/best_dice.html', {'object' : character})
+
+
+# def character_view(request, idenitifer):
+#     """
+#     Views a specific character
+#     """
+#     obj = get_object_or_404(CharacterDice, id=idenitifer)
+#     context = {
+#         'object': obj
+#     }
+#     print(obj)
+#     return render(request, 'dice/character_detail.html', context)
+
+# def all_character_view(request):
+#     """
+#     Views all different characters and their dice
+#     """
+#     queryset = CharacterDice.objects.all()
+#     context = {
+#         "object_list": queryset
+#     }
+#     return render(request, 'dice/character_list.html', context)

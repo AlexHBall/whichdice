@@ -5,6 +5,18 @@ from django import forms
 
 from .models import CharacterDice
 
+ITEM_CHOICES = ['No Item', 'Mushroom (+3)', 'Golden Mushroom (+5)', 'Poison Mushroom (-2)']
+
+
+class GetPlayerSpaces(forms.Form):
+    """
+    Gets the amount of spaces to travel
+    """
+    spaces = forms.IntegerField(label='Select Number of Spaces', min_value=0)
+    item = forms.ChoiceField(
+        choices=enumerate(ITEM_CHOICES), label="Choose Item", initial='',
+        widget=forms.Select(), required=True)
+
 
 class SelectPlayerCharacter(forms.Form):
     """

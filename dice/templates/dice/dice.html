@@ -14,14 +14,9 @@
 <h3>{{ instance }}</h3>
 {% endfor %}
 
-<h1>Places dice</h1>
-{% for instance in place_dice %}
-<h3>{{ instance }}</h3>
-{% endfor %}
-
-<h1>Statistics</h1>
-{% for instance in statistics %}
-<h3>{{ instance }}</h3>
-{% endfor %}
+<form method="POST"> {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value='Select' />
+</form>
 
 {% endblock %}
