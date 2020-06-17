@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'dice/style.css' %}" />
 <h1>Pick Your Characters!</h1>
 <form method="POST"> {% csrf_token %}
     {{ character_form.as_p }}
@@ -16,4 +19,17 @@
     <h3>{{ instance }}</h3>
     {% endfor %}
 {% endif %}
+
+<div class="grid-container">
+    <div class="grid-item">1</div>
+    <div class="grid-item">2</div>
+    <div class="grid-item">3</div>
+    <div class="grid-item">4</div>
+    <div class="grid-item">5</div>
+    <div class="grid-item">6</div>
+    <div class="grid-item">7</div>
+    <div class="grid-item">8</div>
+    <div class="grid-item">9</div>
+  </div>
+
 {% endblock %}
