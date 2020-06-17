@@ -9,27 +9,14 @@
     <input type="submit" value='Select' />
 </form>
 
-{% if character %}
-    <h2>Your Character: {{ character  }}</h2>
-{% endif %}
-
-{% if allies %}
-    <h2>Your Allies</h2>
-    {% for instance in allies %}
-    <h3>{{ instance }}</h3>
-    {% endfor %}
-{% endif %}
-
 <div class="grid-container">
-    <div class="grid-item">1</div>
-    <div class="grid-item">2</div>
-    <div class="grid-item">3</div>
-    <div class="grid-item">4</div>
-    <div class="grid-item">5</div>
-    <div class="grid-item">6</div>
-    <div class="grid-item">7</div>
-    <div class="grid-item">8</div>
-    <div class="grid-item">9</div>
-  </div>
+    {% for instance in object_list %}
 
+    <div class="grid-item">
+        <img src="{% get_static_prefix %}{{ instance.character_image_path }}" alt="">
+        {{instance.character_name}}
+    </div>
+    {% endfor %}
+</div>
+<p>images found <a href="https://mariopartylegacy.com/">here</a></p>
 {% endblock %}

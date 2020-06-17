@@ -18,6 +18,9 @@ class CharacterDice(models.Model):
     dice_side_4 = models.CharField(max_length=3)
     dice_side_5 = models.CharField(max_length=3)
     dice_side_6 = models.CharField(max_length=3)
+    # TODO: Use filepath field ?
+    character_image_path = models.CharField(max_length=50, default="null")
+    character_dice_path = models.CharField(max_length=50, default="null")
 
     def return_dice(self):
         """
@@ -73,7 +76,6 @@ class CharacterDice(models.Model):
         Effect can be +3,+5,-2
         """
 
-
         # TODO: Work out with effect
         # TODO: Work out with how many characters (-1,0 or 1,2)
 
@@ -98,5 +100,5 @@ class CharacterDice(models.Model):
             except KeyError:
                 pass
             current_dice += 1
-            
+
         return dice_number

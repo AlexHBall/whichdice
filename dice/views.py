@@ -41,6 +41,8 @@ def home_view(request):
 
     character_form = SelectPlayerCharacter(request.POST or None)
     context = {'character_form': character_form}
+    display = CharacterDice.objects.all().exclude(id=22).exclude(id=21)
+    context['object_list'] = display
     if character_form.is_valid():
         get_character(character_form)
         get_ally_context(character_form)
@@ -118,7 +120,7 @@ def best_dice_view(request):
         for chara in character_from_session:
             character = chara.object
 
-        return render(request, 'dice/best_dice.html', {'object' : character})
+        return render(request, 'dice/best_dice.html', {'object': character})
     except:
         return render(request, 'dice/best_dice.html', {})
 
