@@ -1,3 +1,14 @@
+footer {
+  text-align: center;
+  padding: 3px;
+  /* background-color: DarkSalmon; */
+  color: black;
+}
+
+.go-button {
+  text-align: center;
+}
+
 .grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -5,5 +16,10 @@
 
 .grid-item {
   font-family: "Lucida Console", Courier, monospace;
-  /* color : red; */
+  text-align: center;
+}
+
+.grid-item-selected {
+  font-family: "Lucida Console", Courier, monospace;
+  
 }
