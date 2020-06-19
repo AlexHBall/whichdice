@@ -1,35 +1,31 @@
-{% extends 'base.html' %}
-{% block content %}
-{% load static %}
-<script>
-    function myFunction(id) {
-        console.log(id)
-        grid_text = document.getElementById(id)
-        grid_text.style.backgroundColor = "red"
-        grid_text.style.textColor = "white"
-
-        // document.getElementById("MyElement").classList.add('MyClass');
-        // document.getElementById("MyElement").classList.remove('MyClass');
-    }
-</script>
+{% extends 'base.html' %} {% block content %} {% load static %}
+<script type="text/javascript" src="/static/dice/app.js"></script>
 <link rel="stylesheet" href="{% static 'dice/style.css' %}" />
 <h1>Pick Your Characters!</h1>
 <div class="grid-container">
-    {% for instance in object_list %}
-    <div class="grid-item" onclick="myFunction(this.id)" id="character_portait_{{instance.id}}">
-        <img src="{% get_static_prefix %}{{ instance.character_image_path }}" alt="">
-        <div class="grid-item-name" id="character_name_text_{{instance.id}}">
-            {{instance.character_name}}
-        </div>
+  {% for instance in object_list %}
+  <div
+    class="grid-item"
+    onclick="onCharacterClicked(this.id)"
+    id="character_portait_{{instance.id}}"
+  >
+    <img
+      src="{% get_static_prefix %}{{ instance.character_image_path }}"
+      alt=""
+    />
+    <div class="grid-item-name" id="character_name_text_{{instance.id}}">
+      {{instance.character_name}}
     </div>
-    {% endfor %}
+  </div>
+  {% endfor %}
 </div>
-<br>
-<br>
-<div class="go-button"> {% csrf_token %}
-    <button method="POST">Go !</button>
+<br />
+<br />
+<div class="go-button">
+  {% csrf_token %}
+  <button method="POST" onclick="submitChoices()">Go !</button>
 </div>
-<br>
-<br>
+<br />
+<br />
 <footer>images found <a href="https://mariopartylegacy.com/">here</a></footer>
 {% endblock %}

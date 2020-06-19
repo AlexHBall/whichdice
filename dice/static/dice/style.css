@@ -10,16 +10,17 @@ footer {
 }
 
 .grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  }
-
-.grid-item {
-  font-family: "Lucida Console", Courier, monospace;
-  text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
 }
 
 .grid-item-selected {
   font-family: "Lucida Console", Courier, monospace;
-  
+  text-align: center;
+  color: red;
+}
+
+.grid-item {
+  font-family: "Lucida Console", Courier, monospace;
+  text-align: center;
 }
