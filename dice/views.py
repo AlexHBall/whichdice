@@ -57,13 +57,11 @@ def dice_view(request):
         characters = get_characters()
         available_dice = []
         place_dice = []
-        # statistics = []
         for character in characters:
             available_dice.append(character.get_true_dice())
             place_dice.append(character.get_places_dice())
             # statistics.append(character.get_statistics())
-        return {'character': characters[1],
-                'allies': characters[2:],
+        return {'characters': characters[1:],
                 'dice': available_dice,
                 'place_dice': place_dice, }
         # 'statistics': statistics, }

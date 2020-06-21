@@ -1,22 +1,37 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2>Your Character: {{ character.character_name  }}</h2>
-{% if allies %}
-    <h2>Your Allies</h2>
-    {% for instance in allies %}
-    <h3>{{ instance.character_name }}</h3>
-    {% endfor %}
-{% endif %}
-<button type="button">Add Ally!</button>
+{% extends 'base.html' %} {% load static %} {% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/dice/app.js"></script>
+<link rel="stylesheet" href="{% static 'dice/style.css' %}" />
+
+<h2>Your Characters</h2>
+<div class="grid-container">
+  {% for instance in characters %}
+  <div
+    class="grid-item"
+    onclick="onCharacterClicked(this.id)"
+    id="character_portait_{{instance.id}}"
+  >
+    <img
+      src="{% get_static_prefix %}{{ instance.character_image_path }}"
+      alt=""
+    />
+    <div class="grid-item-name" id="character_name_text_{{instance.id}}">
+      {{instance.character_name}}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<button type="button">Change Characters!</button>
 
 <h2>Your Available Dice</h2>
 {% for instance in dice %}
 <h3>{{ instance }}</h3>
 {% endfor %}
 
-<form method="POST"> {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value='Select' />
+<form method="POST">
+  {% csrf_token %} {{ form.as_p }}
+  <input type="submit" value="Select" />
 </form>
 
 {% endblock %}
