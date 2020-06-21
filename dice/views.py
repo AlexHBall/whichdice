@@ -5,10 +5,10 @@ from django.shortcuts import render, redirect
 from django.core import serializers
 
 from .models import CharacterDice
-from .forms import SelectPlayerCharacter, GetPlayerSpaces
+from .forms import SelectPlayerCharacter, GetPlayerSpaces, CustomPlayerForm
 
 ALLIES_KEY = 'allies'
-CHARACTER_KEY = 'character'
+CHARACTER_KEY = 'characters'
 BEST_DICE_KEY = 'best_dice'
 
 
@@ -18,35 +18,23 @@ def home_view(request):
     """
     request.session.flush()
 
-    def get_ally_context(form):
+    def get_characters(form):
         result = []
-        allies = ('ally_one',
-                  'ally_two',
-                  'ally_three',
-                  'ally_four')
-        for key in allies:
-            identifier = int(form.cleaned_data.get(key))
-            if identifier > 0:
-                ally = CharacterDice.objects.get(pk=identifier)
-                result.append(ally)
-        request.session[ALLIES_KEY] = serializers.serialize(
+        ids = form.cleaned_data['name']
+        for i in ids:
+            to_query = int(i) + 1
+            result.append(CharacterDice.objects.get(pk=to_query))
+        request.session[CHARACTER_KEY] = serializers.serialize(
             'json', result)
 
-    def get_character(form):
-        character_id = int(form.cleaned_data.get("character")) + 1
-        chara = CharacterDice.objects.get(pk=character_id)
-        character = serializers.serialize(
-            'json', [chara])
-        request.session[CHARACTER_KEY] = character
-
-    character_form = SelectPlayerCharacter(request.POST or None)
-    context = {'character_form': character_form}
+    character_form = CustomPlayerForm(request.POST or None)
+    context = {'form': character_form}
     display = CharacterDice.objects.all().exclude(id=22).exclude(id=21)
     context['object_list'] = display
+
     if character_form.is_valid():
-        get_character(character_form)
-        get_ally_context(character_form)
-        return redirect('/dice')
+        get_characters(character_form)
+        return redirect("/dice")
     return render(request, 'dice/home_screen.html', context)
 
 
@@ -59,15 +47,10 @@ def dice_view(request):
         character_from_session = serializers.deserialize(
             "json", request.session.get(CHARACTER_KEY))
 
-        allies_from_session = serializers.deserialize(
-            "json", request.session.get(ALLIES_KEY))
-
         characters = [CharacterDice.objects.last()]
         for chara in character_from_session:
             characters.append(chara.object)
 
-        for ally in allies_from_session:
-            characters.append(ally.object)
         return characters
 
     def get_context_from_session():

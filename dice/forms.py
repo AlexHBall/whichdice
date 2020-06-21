@@ -5,7 +5,17 @@ from django import forms
 
 from .models import CharacterDice
 
-ITEM_CHOICES = ['No Item', 'Mushroom (+3)', 'Golden Mushroom (+5)', 'Poison Mushroom (-2)']
+ITEM_CHOICES = [
+    'No Item', 'Mushroom (+3)', 'Golden Mushroom (+5)', 'Poison Mushroom (-2)']
+
+
+class CustomPlayerFormSelect(forms.CheckboxSelectMultiple):
+    option_template_name = 'myapp/radio_option_custom.html'
+
+class CustomPlayerForm(forms.Form):
+    characters = CharacterDice.objects.all().exclude(id=22).exclude(id=21)
+    name = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                     choices=enumerate(characters), label="Choose character")
 
 
 class GetPlayerSpaces(forms.Form):
