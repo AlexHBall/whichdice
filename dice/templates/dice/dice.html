@@ -21,9 +21,11 @@
   </div>
   {% endfor %}
 </div>
-
-<button type="button">Change Characters!</button>
-
+<div>
+  <form action="../">
+    <input type="submit" value="Change Characters!" />
+  </form>
+</div>
 <h2>Your Available Dice</h2>
 {% for instance in dice %}
 <h3>{{ instance }}</h3>
