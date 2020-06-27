@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
-
-{% block content %}
-{% if object %}
+{% extends 'base.html' %} {% block content %} {% if object %}
 <p>The best dice to use is {{ object.character_name }}</p>
 <p>{{ object.get_true_dice }}</p>
 {% else %}
 <p>You can't reach requested space</p>
 {% endif %}
-
+<form action="/dice">
+  {% csrf_token %}
+  <input type="submit" value="Change Space!" />
+</form>
 {% endblock %}

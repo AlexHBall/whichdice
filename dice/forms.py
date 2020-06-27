@@ -12,6 +12,7 @@ class CustomPlayerForm(forms.Form):
     characters = CharacterDice.objects.all().exclude(id=22).exclude(id=21)
     name = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
                                      choices=enumerate(characters), label="Choose character")
+                                     
     def clean_name(self):
         value = self.cleaned_data['name']
         if len(value) > 5:

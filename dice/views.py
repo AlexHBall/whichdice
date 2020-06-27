@@ -58,7 +58,7 @@ def dice_view(request):
         available_dice = []
         place_dice = []
         for character in characters:
-            available_dice.append(character.get_true_dice())
+            available_dice.append(character.return_dice())
             place_dice.append(character.get_places_dice())
             # statistics.append(character.get_statistics())
         return {'characters': characters[1:],

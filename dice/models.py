@@ -55,6 +55,10 @@ class CharacterDice(models.Model):
                 places.append(int(side))
         return places
 
+    def get_places_dice_string(self):
+        places = self.get_places_dice()
+        return ', '.join(places)
+
     # def get_coins_dice(self):
     #     """
     #     Returns a list of coin places
