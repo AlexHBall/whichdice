@@ -8,15 +8,15 @@ from .models import CharacterDice
 ITEM_CHOICES = [
     'No Item', 'Mushroom (+3)', 'Golden Mushroom (+5)', 'Poison Mushroom (-2)']
 
-
-class CustomPlayerFormSelect(forms.CheckboxSelectMultiple):
-    option_template_name = 'myapp/radio_option_custom.html'
-
 class CustomPlayerForm(forms.Form):
     characters = CharacterDice.objects.all().exclude(id=22).exclude(id=21)
     name = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple,
                                      choices=enumerate(characters), label="Choose character")
-
+    def clean_name(self):
+        value = self.cleaned_data['name']
+        if len(value) > 5:
+            raise forms.ValidationError("You can't select more than 5 characters.")
+        return value
 
 class GetPlayerSpaces(forms.Form):
     """
