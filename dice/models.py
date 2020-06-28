@@ -80,8 +80,9 @@ class CharacterDice(models.Model):
         Effect can be +3,+5,-2
         """
 
-        # TODO: Work out with effect
         # TODO: Work out with how many characters (-1,0 or 1,2)
+        if effect:
+            target -= int(effect)
 
         counters = []
         probabilites = []
@@ -96,6 +97,7 @@ class CharacterDice(models.Model):
         dice_number = -1
         current_dice = 0
         current_highest_p = 0
+
         for dice in probabilites:
             try:
                 if dice[target] > current_highest_p:

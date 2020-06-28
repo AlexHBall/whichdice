@@ -60,16 +60,15 @@ def dice_view(request):
         for character in characters:
             available_dice.append(character.return_dice())
             place_dice.append(character.get_places_dice())
-            # statistics.append(character.get_statistics())
         return {'characters': characters[1:],
                 'dice': available_dice,
                 'place_dice': place_dice, }
-        # 'statistics': statistics, }
 
     def handle_spaces_form():
+        effects = {"0": 0, "1": 3, "2": 5, "3": -2}
         characters = get_characters()
         target = int(spaces_form.cleaned_data.get("spaces"))
-        effect = spaces_form.cleaned_data.get("item")
+        effect = effects[spaces_form.cleaned_data.get("item")]
         dice = []
         for chara in characters:
             dice.append(chara.get_places_dice())
