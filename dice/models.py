@@ -2,6 +2,8 @@
 Required by django
 """
 from collections import Counter
+from itertools import product as comb_product
+import operator
 
 from django.db import models
 # Create your models here.
@@ -80,31 +82,61 @@ class CharacterDice(models.Model):
         Effect can be +3,+5,-2
         """
 
-        # TODO: Work out with how many characters (-1,0 or 1,2)
+        def calculate_ally_spaces(number_of_allies):
+            # TODO Calculate Bomb-O-Bomb
+            dices = [[1, 2] for i in range(number_of_allies)]
+            spaces = list(comb_product(*dices))
+            totals = []
+            for space in spaces:
+                totals.append(sum(space))
+            b = Counter(totals)
+            probabilites = {}
+            for k in b:
+                probabilites[k] = b[k] / sum(b.values())
+            return probabilites
+
+        def calculate_dice_space_probabilties():
+            probabilites = []
+            for cntr in dice_counts:
+                probability = {}
+                for num in cntr:
+                    probability[num] = cntr[num]/6
+                probabilites.append(probability)
+            return probabilites
+
+        number_to_roll = target
+        number_of_allies = len(dices) - 2
         if effect:
-            target -= int(effect)
+            number_to_roll -= int(effect)
 
-        counters = []
-        probabilites = []
-        for dice in dices:
-            counters.append(Counter(dice))
+        ally_rolls = calculate_ally_spaces(number_of_allies)
+        numbers_to_roll = [number_to_roll-v for v in ally_rolls.keys()]
+        dice_counts = [Counter(d) for d in dices]
+        dice_probabilites = calculate_dice_space_probabilties()
 
-        for cntr in counters:
-            probability = {}
-            for num in cntr:
-                probability[num] = cntr[num]/6
-            probabilites.append(probability)
-        dice_number = -1
-        current_dice = 0
-        current_highest_p = 0
+        best_dice_for_spaces = {}
+        for n in numbers_to_roll:
+            dice_number = -1
+            current_dice = 0
+            current_highest_p = 0
 
-        for dice in probabilites:
-            try:
-                if dice[target] > current_highest_p:
-                    current_highest_p = dice[target]
-                    dice_number = current_dice
-            except KeyError:
-                pass
-            current_dice += 1
+            for dice in dice_probabilites:
+                try:
+                    if dice[n] > current_highest_p:
+                        current_highest_p = dice[n]
+                        dice_number = current_dice
+                except KeyError:
+                    pass
+                current_dice += 1
+            best_dice_for_spaces[n] = dice_number
+        most_probable_ally_roll = max(
+            ally_rolls.items(), key=operator.itemgetter(1))[0]
 
-        return dice_number
+        #TODO Go through each probability sorted not -1 and find most common or return different probabilities
+        probs = {k: v for k, v in sorted(
+            ally_rolls.items(), key=lambda item: item[1], reverse=True)}
+
+        try:
+            return best_dice_for_spaces[most_probable_ally_roll]
+        except KeyError:
+            return -1
