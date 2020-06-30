@@ -7,6 +7,8 @@ from django.core import serializers
 from .models import CharacterDice
 from .forms import SelectPlayerCharacter, GetPlayerSpaces, CustomPlayerForm
 
+import json
+
 ALLIES_KEY = 'allies'
 CHARACTER_KEY = 'characters'
 BEST_DICE_KEY = 'best_dice'
@@ -71,12 +73,11 @@ def dice_view(request):
         effect = effects[spaces_form.cleaned_data.get("item")]
         dice = []
         for chara in characters:
-            dice.append(chara.get_places_dice())
+            dice.append(chara)
         best_dice = CharacterDice.get_best_dice(dice, target, effect)
-        if best_dice >= 0:
-            dice_to_use = characters[best_dice]
-            character = serializers.serialize(
-                'json', [dice_to_use])
+        print(best_dice)
+        if -1 not in best_dice.keys():
+            character = json.dumps(best_dice)
         else:
             character = 'Not Possible'
         request.session[BEST_DICE_KEY] = character
@@ -95,11 +96,7 @@ def best_dice_view(request):
     Displays the best dice to use
     """
     try:
-        character_from_session = serializers.deserialize(
-            "json", request.session.get(BEST_DICE_KEY))
-        for chara in character_from_session:
-            character = chara.object
-
+        character = json.loads(request.session.get(BEST_DICE_KEY))
         return render(request, 'dice/best_dice.html', {'object': character})
     except:
         return render(request, 'dice/best_dice.html', {})

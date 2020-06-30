@@ -74,6 +74,13 @@ class CharacterDice(models.Model):
     #             coins.append(0)
     #     return coins
 
+    def get_probabilites(self):
+        probability = {}
+        sides_counter = Counter(self.get_places_dice())
+        for k in sides_counter.keys():
+            probability[k] = sides_counter[k]/6
+        return probability
+
     @staticmethod
     def get_best_dice(dices, target, effect):
         """
@@ -95,14 +102,35 @@ class CharacterDice(models.Model):
                 probabilites[k] = b[k] / sum(b.values())
             return probabilites
 
-        def calculate_dice_space_probabilties():
-            probabilites = []
-            for cntr in dice_counts:
-                probability = {}
-                for num in cntr:
-                    probability[num] = cntr[num]/6
-                probabilites.append(probability)
-            return probabilites
+        def get_best_dice_dict(dices, ally_roll, no_to_roll):
+            best_dice_dict = {}
+            numbers_to_roll = [no_to_roll-v for v in ally_roll.keys()]
+
+            dice_prob_dicts = [d.get_probabilites() for d in dices]
+            for n in numbers_to_roll:
+                dice_number = -1
+                current_dice = 0
+                current_highest_p = 0
+                for dice in dice_prob_dicts:
+                    try:
+                        if dice[n] > current_highest_p:
+                            current_highest_p = dice[n]
+                            dice_number = current_dice
+                    except KeyError:
+                        pass
+                    current_dice += 1
+                best_dice_dict[n] = dice_number
+            return best_dice_dict
+
+        def get_roll_prob_dict(best_d_dict, ally_dict):
+            # TODO Improve this it's incredibly hacky
+            bad_list = list(best_d_dict.keys())
+            very_bad_list = list(ally_dict.keys())
+            bad_dict = {}
+            for i in range(len(bad_list)):
+                bad_dict[best_d_dict[bad_list[i]]
+                         ] = ally_dict[very_bad_list[i]]
+            return bad_dict
 
         number_to_roll = target
         number_of_allies = len(dices) - 2
@@ -110,33 +138,5 @@ class CharacterDice(models.Model):
             number_to_roll -= int(effect)
 
         ally_rolls = calculate_ally_spaces(number_of_allies)
-        numbers_to_roll = [number_to_roll-v for v in ally_rolls.keys()]
-        dice_counts = [Counter(d) for d in dices]
-        dice_probabilites = calculate_dice_space_probabilties()
-
-        best_dice_for_spaces = {}
-        for n in numbers_to_roll:
-            dice_number = -1
-            current_dice = 0
-            current_highest_p = 0
-
-            for dice in dice_probabilites:
-                try:
-                    if dice[n] > current_highest_p:
-                        current_highest_p = dice[n]
-                        dice_number = current_dice
-                except KeyError:
-                    pass
-                current_dice += 1
-            best_dice_for_spaces[n] = dice_number
-        most_probable_ally_roll = max(
-            ally_rolls.items(), key=operator.itemgetter(1))[0]
-
-        #TODO Go through each probability sorted not -1 and find most common or return different probabilities
-        probs = {k: v for k, v in sorted(
-            ally_rolls.items(), key=lambda item: item[1], reverse=True)}
-
-        try:
-            return best_dice_for_spaces[most_probable_ally_roll]
-        except KeyError:
-            return -1
+        best_dice_dict = get_best_dice_dict(dices, ally_rolls, number_to_roll)
+        return get_roll_prob_dict(best_dice_dict, ally_rolls)
