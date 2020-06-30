@@ -12,6 +12,7 @@ import json
 ALLIES_KEY = 'allies'
 CHARACTER_KEY = 'characters'
 BEST_DICE_KEY = 'best_dice'
+TARGET_SPACES_KEY = 'target'
 
 
 def home_view(request):
@@ -71,16 +72,21 @@ def dice_view(request):
         characters = get_characters()
         target = int(spaces_form.cleaned_data.get("spaces"))
         effect = effects[spaces_form.cleaned_data.get("item")]
-        dice = []
-        for chara in characters:
-            dice.append(chara)
+        dice = [chara for chara in characters]
         best_dice = CharacterDice.get_best_dice(dice, target, effect)
         print(best_dice)
-        if -1 not in best_dice.keys():
-            character = json.dumps(best_dice)
+        character_dice_dict = {}
+        for key in best_dice:
+            character_dice_dict[characters[key].character_name] = str(
+                best_dice[key]*100) + "%"
+        print(character_dice_dict)
+        character_dice_dict.pop('-1', None)
+        if character_dice_dict.keys():
+            character = json.dumps(character_dice_dict)
         else:
             character = 'Not Possible'
         request.session[BEST_DICE_KEY] = character
+        request.session[TARGET_SPACES_KEY] = target
 
     context = get_context_from_session()
     spaces_form = GetPlayerSpaces(request.POST or None)
@@ -95,30 +101,11 @@ def best_dice_view(request):
     """
     Displays the best dice to use
     """
+    target = request.session.get(TARGET_SPACES_KEY)
+
     try:
         character = json.loads(request.session.get(BEST_DICE_KEY))
-        return render(request, 'dice/best_dice.html', {'object': character})
+
+        return render(request, 'dice/best_dice.html', {'object': character, 'target': target})
     except:
-        return render(request, 'dice/best_dice.html', {})
-
-
-# def character_view(request, idenitifer):
-#     """
-#     Views a specific character
-#     """
-#     obj = get_object_or_404(CharacterDice, id=idenitifer)
-#     context = {
-#         'object': obj
-#     }
-#     print(obj)
-#     return render(request, 'dice/character_detail.html', context)
-
-# def all_character_view(request):
-#     """
-#     Views all different characters and their dice
-#     """
-#     queryset = CharacterDice.objects.all()
-#     context = {
-#         "object_list": queryset
-#     }
-#     return render(request, 'dice/character_list.html', context)
+        return render(request, 'dice/best_di∆ce.html', {'target' : target})

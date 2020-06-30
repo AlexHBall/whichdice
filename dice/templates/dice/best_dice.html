@@ -1,8 +1,11 @@
-{% extends 'base.html' %} {% block content %} {% if object %}
-<p>The best dice to use is {{ object.character_name }}</p>
-<p>{{ object.values }}</p>
+{% extends 'base.html' %} {% block content %} 
+{% if object %}
+  <p>The best dice and probability to reach {{ target }} </p>
+  {% for key, value in object.items %}
+    <li>Use {{key}}'s dice with a probability of {{value}}</li>
+  {% endfor %} 
 {% else %}
-<p>You can't reach requested space</p>
+<p>You can't reach requested space {{ target }}</p>
 {% endif %}
 <form action="/dice">
   {% csrf_token %}
