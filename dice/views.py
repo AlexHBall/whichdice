@@ -4,7 +4,7 @@ Required by django
 from django.shortcuts import render, redirect
 from django.core import serializers
 
-from .models import CharacterDice
+from .models import CharacterDice,get_best_dice
 from .forms import SelectPlayerCharacter, GetPlayerSpaces, CustomPlayerForm
 
 import json
@@ -73,7 +73,7 @@ def dice_view(request):
         target = int(spaces_form.cleaned_data.get("spaces"))
         effect = effects[spaces_form.cleaned_data.get("item")]
         dice = [chara for chara in characters]
-        best_dice = CharacterDice.get_best_dice(dice, target, effect)
+        best_dice = get_best_dice(dice, target, effect)
         print(best_dice)
         character_dice_dict = {}
         for key in best_dice:
