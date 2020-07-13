@@ -77,10 +77,11 @@ def dice_view(request):
         print(best_dice)
         character_dice_dict = {}
         for key in best_dice:
-            character_dice_dict[characters[key].character_name] = str(
-                best_dice[key]*100) + "%"
+            if key > 0:
+                # TODO: When key is -1 this isn't possible needs to change
+                character_dice_dict[characters[key].character_name] = str(
+                    best_dice[key]*100) + "%"
         print(character_dice_dict)
-        character_dice_dict.pop('-1', None)
         if character_dice_dict.keys():
             character = json.dumps(character_dice_dict)
         else:
@@ -108,4 +109,4 @@ def best_dice_view(request):
 
         return render(request, 'dice/best_dice.html', {'object': character, 'target': target})
     except:
-        return render(request, 'dice/best_di∆ce.html', {'target' : target})
+        return render(request, 'dice/best_dice.html', {'target' : target})

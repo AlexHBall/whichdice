@@ -136,3 +136,10 @@ def get_best_dice(dices, target, effect):
     ally_rolls = calculate_ally_spaces(number_of_allies)
     best_dice_dict = get_best_dice_dict(dices, ally_rolls, number_to_roll)
     return get_roll_prob_dict(best_dice_dict, ally_rolls)
+
+def get_best_dice_new(dices, target, effect):
+    number_of_allies = len(dices) - 2
+    if effect:
+        target -= int(effect)
+    print("effect considered target now {} and  # allies {} ".format(target,number_of_allies))
+
